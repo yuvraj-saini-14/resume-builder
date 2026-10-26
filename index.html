@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>Resume Builder</title>
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      // Apply saved theme before first paint to avoid a flash of the wrong theme.
+      (function () {
+        if (localStorage.getItem("resumeBuilderTheme") === "dark") {
+          document.documentElement.classList.add("dark-init");
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-mark">R</span>
+        <div>
+          <p class="eyebrow">Resume Builder</p>
+          <h1>Draft a resume that reads like you mean it</h1>
+        </div>
+      </div>
+      <button type="button" id="themeToggle" class="theme-toggle" aria-pressed="false">
+        <span class="icon icon-sun">☀</span>
+        <span class="icon icon-moon">☾</span>
+        <span class="label">Dark mode</span>
+      </button>
+    </header>
+
+    <main class="container">
+      <!-- FORM COLUMN -->
+      <section class="resume-form" aria-label="Resume details form">
+        <form id="resumeForm" novalidate>
+
+          <!-- Personal Information -->
+          <div class="form-section">
+            <div class="form-section-head">
+              <h2>Personal information</h2>
+            </div>
+
+            <div class="field">
+              <label for="name">Full name</label>
+              <input id="name" type="text" autocomplete="name" placeholder="Jordan Ellis" />
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="jobTitle">Job title</label>
+                <input id="jobTitle" type="text" placeholder="Product Designer" />
+              </div>
+              <div class="field">
+                <label for="location">Location</label>
+                <input id="location" type="text" placeholder="Jaipur, India" />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input id="phone" type="tel" autocomplete="tel" placeholder="+91 98765 43210" />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" autocomplete="email" placeholder="you@email.com" />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="linkedin">LinkedIn <span class="optional">(optional)</span></label>
+                <input id="linkedin" type="url" placeholder="linkedin.com/in/you" />
+              </div>
+              <div class="field">
+                <label for="github">GitHub <span class="optional">(optional)</span></label>
+                <input id="github" type="url" placeholder="github.com/you" />
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="summary">Professional summary</label>
+              <textarea id="summary" rows="4" maxlength="400" placeholder="A one or two sentence pitch of who you are and what you're great at."></textarea>
+              <div class="char-count"><span id="summaryCount">0</span>/400</div>
+            </div>
+          </div>
+
+          <!-- Skills -->
+          <details class="form-section" open>
+            <summary>
+              <h2>Skills</h2>
+              <span class="summary-meta"><span class="count-badge" id="skillCount">0</span><span class="chevron"></span></span>
+            </summary>
+            <div class="form-section-body">
+              <div class="field">
+                <label for="skill">Add a skill</label>
+                <input id="skill" type="text" placeholder="e.g. Figma, Python, Negotiation" />
+              </div>
+              <div class="btn-row">
+                <button type="button" id="skill-btn" class="btn btn-primary">Add skill</button>
+              </div>
+              <div id="skillList" class="chip-list"></div>
+            </div>
+          </details>
+
+          <!-- Education -->
+          <details class="form-section">
+            <summary>
+              <h2>Education</h2>
+              <span class="summary-meta"><span class="count-badge" id="educationCount">0</span><span class="chevron"></span></span>
+            </summary>
+            <div class="form-section-body">
+              <div class="field">
+                <label for="degree">Qualification</label>
+                <select id="degree">
+                  <option value="">Select qualification</option>
+                  <option>10th</option>
+                  <option>12th</option>
+                  <option>Diploma</option>
+                  <option>B.Tech</option>
+                  <option>BCA</option>
+                  <option>MCA</option>
+                  <option>M.Tech</option>
+                  <option>MBA</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="institute">Institute</label>
+                <input id="institute" type="text" placeholder="Institute name" />
+              </div>
+              <div class="field-row cols-3">
+                <div class="field">
+                  <label for="startYear">Start year</label>
+                  <input id="startYear" type="number" placeholder="2019" />
+                </div>
+                <div class="field">
+                  <label for="endYear">End year</label>
+                  <input id="endYear" type="number" placeholder="2023" />
+                </div>
+                <div class="field">
+                  <label for="cgpa">CGPA / %</label>
+                  <input id="cgpa" type="text" placeholder="8.4" />
+                </div>
+              </div>
+              <div class="btn-row">
+                <button type="button" id="education-btn" class="btn btn-primary">Add education</button>
+                <button type="button" id="education-cancel" class="btn btn-ghost" hidden>Cancel edit</button>
+              </div>
+              <div id="educationList" class="item-list"></div>
+            </div>
+          </details>
+
+          <!-- Experience -->
+          <details class="form-section">
+            <summary>
+              <h2>Experience</h2>
+              <span class="summary-meta"><span class="count-badge" id="experienceCount">0</span><span class="chevron"></span></span>
+            </summary>
+            <div class="form-section-body">
+              <div class="field-row">
+                <div class="field">
+                  <label for="companyName">Company</label>
+                  <input id="companyName" type="text" placeholder="Company name" />
+                </div>
+                <div class="field">
+                  <label for="jobRole">Role</label>
+                  <input id="jobRole" type="text" placeholder="Job title" />
+                </div>
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label for="startDate">Start date</label>
+                  <input id="startDate" type="month" />
+                </div>
+                <div class="field">
+                  <label for="endDate">End date</label>
+                  <input id="endDate" type="month" />
+                </div>
+              </div>
+              <div class="checkbox-field">
+                <input id="currentJob" type="checkbox" />
+                <label for="currentJob">I currently work here</label>
+              </div>
+              <div class="field">
+                <label for="workDescriptions">What did you work on?</label>
+                <textarea id="workDescriptions" rows="4" placeholder="Key responsibilities and outcomes"></textarea>
+              </div>
+              <div class="btn-row">
+                <button type="button" id="experience-btn" class="btn btn-primary">Add experience</button>
+                <button type="button" id="experience-cancel" class="btn btn-ghost" hidden>Cancel edit</button>
+              </div>
+              <div id="experienceList" class="item-list"></div>
+            </div>
+          </details>
+
+          <!-- Projects -->
+          <details class="form-section">
+            <summary>
+              <h2>Projects</h2>
+              <span class="summary-meta"><span class="count-badge" id="projectCount">0</span><span class="chevron"></span></span>
+            </summary>
+            <div class="form-section-body">
+              <div class="field-row">
+                <div class="field">
+                  <label for="projectName">Project name</label>
+                  <input id="projectName" type="text" placeholder="Project name" />
+                </div>
+                <div class="field">
+                  <label for="technologies">Technologies</label>
+                  <input id="technologies" type="text" placeholder="React, Node.js, PostgreSQL" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="projectDescription">Description</label>
+                <textarea id="projectDescription" rows="3" placeholder="What it does and the impact it had"></textarea>
+              </div>
+              <div class="field">
+                <label for="gitLink">Link <span class="optional">(optional)</span></label>
+                <input id="gitLink" type="url" placeholder="github.com/you/project" />
+              </div>
+              <div class="btn-row">
+                <button type="button" id="project-btn" class="btn btn-primary">Add project</button>
+                <button type="button" id="project-cancel" class="btn btn-ghost" hidden>Cancel edit</button>
+              </div>
+              <div id="projectList" class="item-list"></div>
+            </div>
+          </details>
+
+          <!-- Certificates -->
+          <details class="form-section">
+            <summary>
+              <h2>Certificates</h2>
+              <span class="summary-meta"><span class="count-badge" id="certificateCount">0</span><span class="chevron"></span></span>
+            </summary>
+            <div class="form-section-body">
+              <div class="field-row">
+                <div class="field">
+                  <label for="certificateName">Certificate name</label>
+                  <input id="certificateName" type="text" placeholder="Certificate name" />
+                </div>
+                <div class="field">
+                  <label for="issuedBy">Issued by</label>
+                  <input id="issuedBy" type="text" placeholder="Issuing organization" />
+                </div>
+              </div>
+              <div class="field">
+                <label for="issuedDate">Issued date</label>
+                <input id="issuedDate" type="month" />
+              </div>
+              <div class="btn-row">
+                <button type="button" id="certificate-btn" class="btn btn-primary">Add certificate</button>
+                <button type="button" id="certificate-cancel" class="btn btn-ghost" hidden>Cancel edit</button>
+              </div>
+              <div id="certificateList" class="item-list"></div>
+            </div>
+          </details>
+        </form>
+      </section>
+
+      <!-- PREVIEW COLUMN -->
+      <section class="preview-column" aria-label="Resume preview">
+        <div class="preview-toolbar">
+          <div class="template-switcher" id="templateSwitcher">
+            <button type="button" class="template-card active" data-template="template1">
+              <div class="template-thumb" id="thumb-template1">
+                <div class="bar"></div><div class="bar" style="width:80%"></div><div class="bar" style="width:60%"></div>
+              </div>
+              <h3>Classic</h3>
+              <p>Centered, single column</p>
+            </button>
+            <button type="button" class="template-card" data-template="template2">
+              <div class="template-thumb" id="thumb-template2">
+                <div class="side"></div>
+                <div class="main"><div class="bar" style="width:70%"></div><div class="bar" style="width:50%"></div><div class="bar" style="width:60%"></div></div>
+              </div>
+              <h3>Sidebar</h3>
+              <p>Two column, modern</p>
+            </button>
+          </div>
+
+          <div class="toolbar-actions">
+            <button type="button" id="updatePreview-btn" class="btn btn-secondary">Update preview</button>
+            <button type="button" id="downloadResume-btn" class="btn btn-primary">Download PDF</button>
+            <button type="button" id="saveResume-btn" class="btn btn-secondary">Save</button>
+            <button type="button" id="resetForm-btn" class="btn btn-ghost">Reset</button>
+            <span class="save-status" id="saveStatus"></span>
+          </div>
+        </div>
+
+        <div class="preview-shell">
+          <div id="previewContainer">
+            <div class="preview-placeholder">
+              <strong>Your resume preview appears here</strong>
+              Fill in your details on the left — the preview updates automatically as you type.
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
